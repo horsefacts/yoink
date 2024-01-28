@@ -25,7 +25,7 @@ export default function Home() {
   return (
     <main className="flex flex-col text-center p-16">
       <Yoink />
-      <div className="mt-16">
+      <div className="mt-4">
         See the code on <a className="text-red-500 underline" href="https://github.com/horsefacts/yoink" target="_blank">GitHub</a>
       </div>
     </main>
