@@ -26,7 +26,8 @@ export default function Home() {
     <main className="flex flex-col text-center p-16">
       <Yoink />
       <div className="mt-4">
-        See the code on <a className="text-red-500 underline" href="https://github.com/horsefacts/yoink" target="_blank">GitHub</a>
+        <p>Click <a className="text-red-500 underline" href="https://warpcast.com/horsefacts.eth/0x80dd1ea4" target="_blank">here</a> to yoink on Warpcast.</p>
+        <p>See the code on <a className="text-red-500 underline" href="https://github.com/horsefacts/yoink" target="_blank">GitHub</a></p>
       </div>
     </main>
   );
