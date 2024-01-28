@@ -23,7 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function Home() {
   return (
-    <main className="flex flex-col text-center p-16">
+    <main className="flex flex-col text-center lg:p-16">
       <Yoink />
       <div className="mt-4">
         <p>Click <a className="text-red-500 underline" href="https://warpcast.com/horsefacts.eth/0x80dd1ea4" target="_blank">here</a> to yoink on Warpcast.</p>
