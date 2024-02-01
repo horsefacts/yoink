@@ -39,9 +39,9 @@ export default function Yoink() {
       {yoinks && (
         <p className="text-2xl">The flag has been yoinked {yoinks} times.</p>
       )}
-      <div className="mt-4">
+      <div className="mt-4 text-xl">
         <p>
-          Click{" "}
+          Yoink{" "}
           <a
             className="text-red-500 underline"
             href="https://warpcast.com/horsefacts.eth/0x80dd1ea4"
@@ -49,7 +49,7 @@ export default function Yoink() {
           >
             here
           </a>{" "}
-          to yoink on Warpcast.
+          on Warpcast.
         </p>
         <p>
           See the code on{" "}
