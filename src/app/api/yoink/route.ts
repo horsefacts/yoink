@@ -19,14 +19,14 @@ export async function POST(req: NextRequest) {
     const validMessage = validateResult.value.message;
     const fid = validMessage?.data?.fid ?? 0;
 
+    let urlBuffer = validMessage?.data?.frameActionBody?.url ?? [];
+    const urlString = Buffer.from(urlBuffer).toString("utf-8");
+    if (!urlString.startsWith(process.env["HOST"] ?? "")) {
+      return new NextResponse("Bad Request", { status: 400 });
+    }
+
     const userDataResult = await hubClient.getUserDataByFid({ fid });
     if (userDataResult.isOk()) {
-
-     let urlBuffer = validMessage?.data?.frameActionBody?.url || [];
-     const urlString = Buffer.from(urlBuffer).toString('utf-8');
-     if (!urlString.startsWith(process.env['HOST'] || '')) {
-         return new NextResponse("Bad Request", { status: 400 });
-     }
       const userData = userDataResult.value;
       let name = `FID #${fid}`;
       for (const message of userData.messages) {
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
           break;
         }
       }
-      const flag = await kv.get("flag") as string;
+      const flag = (await kv.get("flag")) as string;
       if (name.toString() !== flag.toString()) {
         await kv.set("flag", name);
         await kv.incr("yoinks");
@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
           headers: {
             "Content-Type": "text/html",
           },
-        },
+        }
       );
     } else {
       return new NextResponse("Internal server error", { status: 500 });

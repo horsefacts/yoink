@@ -13,7 +13,7 @@ export default function Yoink() {
 
   useEffect(() => {
     const getFlag = async () => {
-      const res = await fetch("/api/stats", { cache: "no-store" });
+      const res = await fetch("/api/stats", { next: { revalidate: 10 } });
       const _stats = await res.json();
       setStats(_stats);
     };
@@ -30,10 +30,29 @@ export default function Yoink() {
         <p className="text-2xl">The flag has been yoinked {yoinks} times.</p>
       )}
       <div className="mt-4">
-        <p>Click <a className="text-red-500 underline" href="https://warpcast.com/horsefacts.eth/0x80dd1ea4" target="_blank">here</a> to yoink on Warpcast.</p>
-        <p>See the code on <a className="text-red-500 underline" href="https://github.com/horsefacts/yoink" target="_blank">GitHub</a></p>
+        <p>
+          Click{" "}
+          <a
+            className="text-red-500 underline"
+            href="https://warpcast.com/horsefacts.eth/0x80dd1ea4"
+            target="_blank"
+          >
+            here
+          </a>{" "}
+          to yoink on Warpcast.
+        </p>
+        <p>
+          See the code on{" "}
+          <a
+            className="text-red-500 underline"
+            href="https://github.com/horsefacts/yoink"
+            target="_blank"
+          >
+            GitHub
+          </a>
+        </p>
       </div>
-     {leaderboard && <Leaderboard leaderboard={leaderboard ?? []} />}
+      {leaderboard && <Leaderboard leaderboard={leaderboard ?? []} />}
     </div>
   );
 }
