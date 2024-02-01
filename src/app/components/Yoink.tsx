@@ -8,24 +8,34 @@ interface Stats {
   leaderboard?: [string, number][];
 }
 
+interface Flag {
+  flag?: string;
+}
+
 export default function Yoink() {
+  const [flag, setFlag] = useState<Flag>({});
   const [stats, setStats] = useState<Stats>({});
 
   useEffect(() => {
-    const getFlag = async () => {
-      const res = await fetch("/api/stats", { next: { revalidate: 10 } });
+    const getStats = async () => {
+      let res = await fetch("/api/stats", { next: { revalidate: 1800 } });
       const _stats = await res.json();
       setStats(_stats);
+
+      res = await fetch("/api/flag", { cache: "no-cache" });
+      const _flag = await res.json();
+      setFlag(_flag);
     };
-    getFlag();
+    getStats();
   }, []);
 
-  const { flag, yoinks, leaderboard } = stats;
+  const { yoinks, leaderboard } = stats;
+  const { flag: username } = flag;
 
   return (
     <div className="space-y-4">
       <h1 className="text-8xl font-bold">Yoink!</h1>
-      {flag && <p className="text-2xl">{flag} has the flag 🚩</p>}
+      {flag && <p className="text-2xl">{username} has the flag 🚩</p>}
       {yoinks && (
         <p className="text-2xl">The flag has been yoinked {yoinks} times.</p>
       )}
