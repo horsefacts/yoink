@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { kv } from "@vercel/kv";
 
+export const revalidate = 1800;
+
 export async function GET() {
   const flag = (await kv.get("flag")) as string;
   const yoinks = (await kv.get("yoinks")) as string;
@@ -17,5 +19,5 @@ export async function GET() {
   const leaderboard = userKeys
     .map((key, i) => [key.split(":")[1], yoinkCounts[i]] as [string, number])
     .sort((a, b) => b[1] - a[1]);
-  return NextResponse.json({ flag, yoinks, leaderboard }, { headers: { 'Cache-Control': "max-age=1800" }});
+  return NextResponse.json({ flag, yoinks, leaderboard });
 }
