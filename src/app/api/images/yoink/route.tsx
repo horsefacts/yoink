@@ -1,8 +1,11 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import satori from "satori";
 import sharp from "sharp";
 import { join } from "path";
 import * as fs from "fs";
+import { kv } from "@vercel/kv";
+
+export const dynamic = "force-dynamic";
 
 const interRegPath = join(process.cwd(), "public/Inter-Regular.ttf");
 let interReg = fs.readFileSync(interRegPath);
@@ -10,7 +13,11 @@ let interReg = fs.readFileSync(interRegPath);
 const interBoldPath = join(process.cwd(), "public/Inter-Bold.ttf");
 let interBold = fs.readFileSync(interBoldPath);
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const searchParams = req.nextUrl.searchParams
+  const name = searchParams.get('name') ?? "";
+  const yoinks = (await kv.get(`yoinks:${name}`)) as string;
+
   const svg = await satori(
     <div
       style={{
@@ -36,6 +43,7 @@ export async function GET() {
           src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/15.0.3/72x72/1f6a9.png"
         />
       </div>
+      <div style={{ display: "flex", marginTop: 12}}>{yoinks} yoinks</div>
     </div>,
     {
       width: 600,
