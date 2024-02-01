@@ -1,8 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST() {
+export async function POST(req: NextRequest) {
   const postUrl = `${process.env["HOST"]}/api/yoink`;
   const imageUrl = `${process.env["HOST"]}/api/images/flag?date=${Date.now()}`;
+
+
+  const {
+    untrustedData: { buttonIndex },
+  } = await req.json();
+
+  if (buttonIndex === 2) {
+    return NextResponse.redirect('https://redirect-frame.vercel.app/redirect', {status: 302});
+  }
 
   return new NextResponse(
     `<!DOCTYPE html>

@@ -11,7 +11,7 @@ export async function GET() {
   let userKeys = [];
 
   do {
-    const res = await kv.scan(cursor, { match: "yoinks:*", count: 1000 });
+    const res = await kv.scan(cursor, { match: "yoinks:*", count: 2500 });
     cursor = res[0];
     userKeys.push(...res[1]);
   } while (cursor !== 0);

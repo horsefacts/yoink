@@ -29,6 +29,10 @@ export default function Yoink() {
       {yoinks && (
         <p className="text-2xl">The flag has been yoinked {yoinks} times.</p>
       )}
+      <div className="mt-4">
+        <p>Click <a className="text-red-500 underline" href="https://warpcast.com/horsefacts.eth/0x80dd1ea4" target="_blank">here</a> to yoink on Warpcast.</p>
+        <p>See the code on <a className="text-red-500 underline" href="https://github.com/horsefacts/yoink" target="_blank">GitHub</a></p>
+      </div>
      {leaderboard && <Leaderboard leaderboard={leaderboard ?? []} />}
     </div>
   );
