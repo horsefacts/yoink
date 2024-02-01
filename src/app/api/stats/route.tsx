@@ -17,5 +17,5 @@ export async function GET() {
   const leaderboard = userKeys
     .map((key, i) => [key.split(":")[1], yoinkCounts[i]] as [string, number])
     .sort((a, b) => b[1] - a[1]);
-  return NextResponse.json({ flag, yoinks, leaderboard });
+  return NextResponse.json({ flag, yoinks, leaderboard }, { headers: { 'Cache-Control': "max-age=1800" }});
 }
