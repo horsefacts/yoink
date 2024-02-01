@@ -22,7 +22,7 @@ export default function Leaderboard({
               </tr>
             </thead>
             <tbody>
-              {leaderboard.slice(0, 10).map(([user, score], index) => (
+              {leaderboard.slice(0, 100).map(([user, score], index) => (
                 <tr key={user}>
                   <td className="border border-gray-300 px-2 py-2 text-sm sm:px-4 sm:py-2">
                     {index + 1}
