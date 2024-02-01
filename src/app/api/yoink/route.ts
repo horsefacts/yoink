@@ -21,6 +21,12 @@ export async function POST(req: NextRequest) {
 
     const userDataResult = await hubClient.getUserDataByFid({ fid });
     if (userDataResult.isOk()) {
+
+     let urlBuffer = validMessage?.data?.frameActionBody?.url || [];
+     const urlString = Buffer.from(urlBuffer).toString('utf-8');
+     if (!urlString.startsWith(process.env['HOST'] || '')) {
+         return new NextResponse("Bad Request", { status: 400 });
+     }
       const userData = userDataResult.value;
       let name = `FID #${fid}`;
       for (const message of userData.messages) {
@@ -61,7 +67,7 @@ export async function POST(req: NextRequest) {
       return new NextResponse("Internal server error", { status: 500 });
     }
   } else {
-    return new NextResponse("Bad Request", { status: 401 });
+    return new NextResponse("Unauthorized", { status: 401 });
   }
 }
 
