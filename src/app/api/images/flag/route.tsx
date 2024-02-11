@@ -43,7 +43,7 @@ export async function GET() {
         />
       </div>
       <div style={{ display: "flex", marginTop: "12" }}>
-         {yoinks} remain.
+         {yoinks} yoinks remain.
       </div>
     </div>,
     {
