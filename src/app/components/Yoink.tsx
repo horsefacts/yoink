@@ -37,7 +37,7 @@ export default function Yoink() {
       <h1 className="text-8xl font-bold">Yoink!</h1>
       {flag && <p className="text-2xl">{username} has the flag 🚩</p>}
       {yoinks && (
-        <p className="text-2xl">The flag has been yoinked {yoinks} times.</p>
+        <p className="text-2xl">{yoinks} yoinks remain.</p>
       )}
       <div className="mt-4 text-xl">
         <p>

@@ -43,7 +43,7 @@ export async function GET() {
         />
       </div>
       <div style={{ display: "flex", marginTop: "12" }}>
-        The flag has been yoinked {yoinks} times.
+         {yoinks} remain.
       </div>
     </div>,
     {
