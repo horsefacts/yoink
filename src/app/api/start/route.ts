@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const imageUrl = `${process.env["HOST"]}/api/images/start`;
+  const imageUrl = `${process.env["HOST"]}/api/images/start?date=${Date.now()}`;
 
 
   const {

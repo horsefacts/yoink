@@ -4,7 +4,7 @@ import Yoink from "@/app/components/Yoink";
 const postUrl = `${process.env["HOST"]}/api/start`;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const imageUrl = `${process.env["HOST"]}/api/images/start`;
+  const imageUrl = `${process.env["HOST"]}/api/images/start?date=${Date.now()}`;
   return {
     title: "Yoink",
     description: "yoink!",
