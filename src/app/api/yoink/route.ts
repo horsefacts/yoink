@@ -1,73 +1,182 @@
 import { NextRequest, NextResponse } from "next/server";
-import { kv } from "@vercel/kv";
 import {
   getSSLHubRpcClient,
   Message,
   UserDataType,
 } from "@farcaster/hub-nodejs";
+import { yoinkFlag } from "@/lib/yoinkFlag";
+import lens from "@/lib/lens";
 
 const HUB_URL = process.env["HUB_URL"] || "nemes.farcaster.xyz:2283";
 const hubClient = getSSLHubRpcClient(HUB_URL);
 
+const HOST = process.env["HOST"] || "https://yoink.terminally.online";
+
 export async function POST(req: NextRequest) {
   const {
-    trustedData: { messageBytes },
+    untrustedData: { profileId },
+    trustedData: { messageBytes, url: lensUrl },
   } = await req.json();
-  const frameMessage = Message.decode(Buffer.from(messageBytes, "hex"));
-  const validateResult = await hubClient.validateMessage(frameMessage);
-  if (validateResult.isOk() && validateResult.value.valid) {
-    const validMessage = validateResult.value.message;
-    const fid = validMessage?.data?.fid ?? 0;
 
-    let urlBuffer = validMessage?.data?.frameActionBody?.url ?? [];
-    const urlString = Buffer.from(urlBuffer).toString("utf-8");
-    if (!urlString.startsWith(process.env["HOST"] ?? "")) {
-      return new NextResponse("Bad Request", { status: 400 });
-    }
+  const platform = profileId ? "lens" : "farcaster";
 
-    const userDataResult = await hubClient.getUserDataByFid({ fid });
-    if (userDataResult.isOk()) {
-      const userData = userDataResult.value;
-      let name = `FID #${fid}`;
-      for (const message of userData.messages) {
-        if (message?.data?.userDataBody?.type === UserDataType.USERNAME) {
-          name = message.data.userDataBody.value;
-          break;
-        }
-      }
-      const flag = (await kv.get("flag")) as string;
-      const key = `yoinks:${name}`;
-      if (name.toString() !== flag.toString()) {
-        await kv.set("flag", name);
-        await kv.decr("yoinks");
-        await kv.decr(key);
+  if (platform === "farcaster") {
+    const frameMessage = Message.decode(Buffer.from(messageBytes, "hex"));
+    const validateResult = await hubClient.validateMessage(frameMessage);
+    if (validateResult.isOk() && validateResult.value.valid) {
+      const validMessage = validateResult.value.message;
+      const fid = validMessage?.data?.fid ?? 0;
+
+      let urlBuffer = validMessage?.data?.frameActionBody?.url ?? [];
+      const urlString = Buffer.from(urlBuffer).toString("utf-8");
+      if (!urlString.startsWith(HOST)) {
+        return new NextResponse("Unauthorized", { status: 401 });
       }
 
-      const imageUrl = `${process.env["HOST"]}/api/images/yoink?date=${Date.now()}&name=${name}`;
-      return new NextResponse(
-        `<!DOCTYPE html>
-      <html>
-        <head>
-          <title>Yoinked!</title>
-          <meta property="og:title" content="Yoinked!" />
-          <meta property="og:image" content="${imageUrl}" />
-          <meta name="fc:frame" content="vNext" />
-          <meta name="fc:frame:image" content="${imageUrl}" />
-        </head>
-        <body>Yoink</body>
-      </html>`,
-        {
-          status: 200,
-          headers: {
-            "Content-Type": "text/html",
-          },
+      const userDataResult = await hubClient.getUserDataByFid({ fid });
+      if (userDataResult.isOk()) {
+        const userData = userDataResult.value;
+        let name = `FID #${fid}`;
+        for (const message of userData.messages) {
+          if (message?.data?.userDataBody?.type === UserDataType.USERNAME) {
+            name = message.data.userDataBody.value;
+            break;
+          }
         }
-      );
+
+        try {
+          await yoinkFlag(fid.toString(), name, platform);
+          const id = `${platform}:${fid}`;
+          const imageUrl = `${HOST}/api/images/yoink?date=${Date.now()}&id=${id}`;
+          return new NextResponse(
+            `<!DOCTYPE html>
+             <html>
+               <head>
+                 <title>Yoinked!</title>
+                 <meta property="og:title" content="Yoinked!" />
+                 <meta property="og:image" content="${imageUrl}" />
+                 <meta name="fc:frame" content="vNext" />
+                 <meta name="fc:frame:image" content="${imageUrl}" />
+                 <meta name="fc:frame:button:1" content="🏆 Leaderboard" />
+                 <meta name="fc:frame:button:1:action" content="link" />
+                 <meta name="fc:frame:button:1:target" content="${HOST}" />
+               </head>
+               <body>Yoink</body>
+             </html>`,
+            {
+              status: 200,
+              headers: {
+                "Content-Type": "text/html",
+              },
+            },
+          );
+        } catch (e: any) {
+          if (e?.message === "Rate limit exceeded.") {
+            const imageUrl = `${HOST}/api/images/ratelimit`;
+            return new NextResponse(
+              `<!DOCTYPE html>
+               <html>
+                 <head>
+                   <title>Slow down!</title>
+                   <meta property="og:title" content="Yoinked!" />
+                   <meta property="og:image" content="${imageUrl}" />
+                   <meta name="fc:frame" content="vNext" />
+                   <meta name="fc:frame:image" content="${imageUrl}" />
+                   <meta name="fc:frame:button:1" content="🏆 Leaderboard" />
+                   <meta name="fc:frame:button:1:action" content="link" />
+                   <meta name="fc:frame:button:1:target" content="${HOST}" />
+                 </head>
+                 <body>Slow down!</body>
+               </html>`,
+              {
+                status: 200,
+                headers: {
+                  "Content-Type": "text/html",
+                },
+              },
+            );
+          } else {
+            return new NextResponse("Internal server error", { status: 500 });
+          }
+        }
+      } else {
+        return new NextResponse("Internal server error", { status: 500 });
+      }
     } else {
-      return new NextResponse("Internal server error", { status: 500 });
+      return new NextResponse("Unauthorized", { status: 401 });
     }
   } else {
-    return new NextResponse("Unauthorized", { status: 401 });
+    if (!lensUrl.startsWith(HOST)) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+
+    const res = await lens.profile.fetch({
+      forProfileId: profileId,
+    });
+    if (res?.handle) {
+      const {
+        handle: { localName },
+      } = res;
+      try {
+        await yoinkFlag(profileId, localName, platform);
+        const id = `${platform}:${profileId}`;
+        const postUrl = `${HOST}/api/start`;
+        const imageUrl = `${HOST}/api/images/yoink?date=${Date.now()}&id=${id}`;
+        return new NextResponse(
+          `<!DOCTYPE html>
+             <html>
+               <head>
+                 <title>Yoinked!</title>
+                 <meta property="og:title" content="Yoinked!" />
+                 <meta property="og:image" content="${imageUrl}" />
+                 <meta name="hey:portal" content="vLatest" />
+                 <meta name="hey:portal:image" content="${imageUrl}" />
+                 <meta name="hey:portal:post_url" content="${postUrl}" />
+                 <meta name="hey:portal:button:1" content="🏆 Leaderboard" />
+                 <meta name="hey:portal:button:1:type" content="link" />
+                 <meta name="hey:portal:button:1:target" content="${HOST}" />
+               </head>
+               <body>Yoink</body>
+             </html>`,
+          {
+            status: 200,
+            headers: {
+              "Content-Type": "text/html",
+            },
+          },
+        );
+      } catch (e: any) {
+        if (e?.message === "Rate limit exceeded.") {
+          const postUrl = `${HOST}/api/start`;
+          const imageUrl = `${HOST}/api/images/ratelimit`;
+          return new NextResponse(
+            `<!DOCTYPE html>
+               <html>
+                 <head>
+                   <title>Slow down!</title>
+                   <meta property="og:title" content="Yoinked!" />
+                   <meta property="og:image" content="${imageUrl}" />
+                   <meta name="hey:portal" content="vLatest" />
+                   <meta name="hey:portal:image" content="${imageUrl}" />
+                   <meta name="hey:portal:post_url" content="${postUrl}" />
+                   <meta name="hey:portal:button:1" content="🏆 Leaderboard" />
+                   <meta name="hey:portal:button:1:type" content="link" />
+                   <meta name="hey:portal:button:1:target" content="${HOST}" />
+                 </head>
+                 <body>Slow down!</body>
+               </html>`,
+            {
+              status: 200,
+              headers: {
+                "Content-Type": "text/html",
+              },
+            },
+          );
+        } else {
+          return new NextResponse("Internal server error", { status: 500 });
+        }
+      }
+    }
   }
 }
 
