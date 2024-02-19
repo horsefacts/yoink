@@ -13,32 +13,14 @@ interface Flag {
 }
 
 export default function Yoink() {
-  const [flag, setFlag] = useState<Flag>({});
-  const [stats, setStats] = useState<Stats>({});
-
-  useEffect(() => {
-    const getStats = async () => {
-      let res = await fetch("/api/stats", { next: { revalidate: 1800 } });
-      const _stats = await res.json();
-      setStats(_stats);
-
-      res = await fetch("/api/flag", { cache: "no-cache" });
-      const _flag = await res.json();
-      setFlag(_flag);
-    };
-    getStats();
-  }, []);
-
-  const { yoinks, leaderboard } = stats;
-  const { flag: username } = flag;
-
   return (
     <div className="space-y-4">
-      <h1 className="text-8xl font-bold">Yoink!</h1>
-      {flag && <p className="text-2xl">{username} has the flag 🚩</p>}
-      {yoinks && (
-        <p className="text-2xl">{yoinks} yoinks remain.</p>
-      )}
+        <h1 className="text-8xl font-bold">✨ Yoink Jubilee! 🚩</h1>
+      <div className="mt-4 text-4xl">
+        <p>All Yoinks Reset.</p>
+        <p>All Debts Forgiven.</p>
+        <p>The Game Is Changing...</p>
+      </div>
       <div className="mt-4 text-xl">
         <p>
           Yoink{" "}
@@ -62,7 +44,6 @@ export default function Yoink() {
           </a>
         </p>
       </div>
-      {leaderboard && <Leaderboard leaderboard={leaderboard ?? []} />}
     </div>
   );
 }

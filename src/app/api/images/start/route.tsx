@@ -1,6 +1,4 @@
-import { NextResponse } from "next/server";
-import satori from "satori";
-import sharp from "sharp";
+import { ImageResponse } from "next/og";
 import { join } from "path";
 import * as fs from "fs";
 
@@ -11,7 +9,7 @@ const interBoldPath = join(process.cwd(), "public/Inter-Bold.ttf");
 let interBold = fs.readFileSync(interBoldPath);
 
 export async function GET() {
-  const svg = await satori(
+  return new ImageResponse(
     <div
       style={{
         justifyContent: "center",
@@ -20,26 +18,33 @@ export async function GET() {
         flexDirection: "column",
         width: "100%",
         height: "100%",
-        backgroundColor: "white",
-        padding: 50,
-        lineHeight: 1.2,
         fontSize: 24,
-        color: "black",
       }}
     >
-      <h1>Yoink!</h1>
-      <div style={{ display: "flex" }}>
-        Click to yoink the flag{" "}
+      <h1>
         <img
-          width="32"
-          height="32"
-          src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/15.0.3/72x72/1f6a9.png"
+          width="48"
+          height="48"
+          src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/15.0.3/72x72/2728.png"
+          style={{ fontWeight: '800', verticalAlign: 'middle', marginRight: '12px' }}
         />
+        Yoink Jubilee!
+        <img
+          width="48"
+          height="48"
+          src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/15.0.3/72x72/1f6a9.png"
+          style={{ verticalAlign: 'middle', marginLeft: '12px' }}
+        />
+      </h1>
+      <div>All Yoinks Reset.</div>
+      <div>All Debts Forgiven.</div>
+      <div style={{ display: 'flex' }}>
+        The Game Is Changing...
       </div>
     </div>,
     {
       width: 600,
-      height: 400,
+      height: 315,
       fonts: [
         {
           name: "Inter",
@@ -54,18 +59,6 @@ export async function GET() {
           style: "normal",
         },
       ],
-    },
+    }
   );
-
-  const img = await sharp(Buffer.from(svg))
-    .resize(1200)
-    .toFormat("png")
-    .toBuffer();
-  return new NextResponse(img, {
-    status: 200,
-    headers: {
-      "Content-Type": "image/png",
-      "Cache-Control": "max-age=10",
-    },
-  });
 }
