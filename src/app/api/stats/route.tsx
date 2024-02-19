@@ -1,23 +1,48 @@
+import redis from "@/lib/redis";
 import { NextResponse } from "next/server";
-import { kv } from "@vercel/kv";
 
 export const revalidate = 1800;
 
 export async function GET() {
-  const flag = (await kv.get("flag")) as string;
-  const yoinks = (await kv.get("yoinks")) as string;
+  const flag = await redis.hgetall("flag");
+  const { holderId, yoinkedAt } = flag;
+  const yoinks = (await redis.get("yoinks")) ?? "0";
+  const userYoinksArray = await redis.zrevrange(
+    "userYoinks",
+    0,
+    -1,
+    "WITHSCORES",
+  );
+  const userTimesArray = await redis.zrange("userTimes", 0, -1, "WITHSCORES");
+  const users = await redis.hgetall("users");
 
-  let cursor = 0;
-  let userKeys = [];
+  const arrayToObject = (arr: string[]) => {
+    let obj: Record<string, number> = {};
+    for (let i = 0; i < arr.length; i += 2) {
+      obj[arr[i]] = parseInt(arr[i + 1]);
+    }
+    return obj;
+  };
 
-  do {
-    const res = await kv.scan(cursor, { match: "yoinks:*", count: 2500 });
-    cursor = res[0];
-    userKeys.push(...res[1]);
-  } while (cursor !== 0);
-  const yoinkCounts = await kv.mget(userKeys);
-  const leaderboard = userKeys
-    .map((key, i) => [key.split(":")[1], yoinkCounts[i]] as [string, number])
-    .sort((a, b) => b[1] - a[1]);
-  return NextResponse.json({ flag, yoinks, leaderboard });
+  const userYoinks = arrayToObject(userYoinksArray);
+  const userTimes = arrayToObject(userTimesArray);
+
+  if (holderId && yoinkedAt) {
+    const currentTime = Date.now();
+    const elapsedTime = Math.floor(
+      (currentTime - parseInt(yoinkedAt, 10)) / 1000,
+    );
+    userTimes[holderId] = (userTimes[holderId] || 0) + elapsedTime;
+    const [platform] = holderId.split(":");
+    userTimes[`platform:${platform}`] =
+      (userTimes[`platform:${platform}`] || 0) + elapsedTime;
+  }
+
+  return NextResponse.json({
+    flag: { ...flag, yoinkedAt: parseInt(yoinkedAt) },
+    yoinks: parseInt(yoinks),
+    userYoinks,
+    userTimes,
+    users,
+  });
 }

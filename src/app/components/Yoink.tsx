@@ -2,25 +2,60 @@
 import { useEffect, useState } from "react";
 import Leaderboard from "./Leaderboard";
 
-interface Stats {
-  flag?: string;
-  yoinks?: string;
-  leaderboard?: [string, number][];
+interface Flag {
+  yoinkedAt: number;
+  holderId: string;
+  holderName: string;
+  holderPlatform: string;
 }
 
-interface Flag {
-  flag?: string;
+export interface Stats {
+  flag: Flag;
+  yoinks: number;
+  userYoinks: { [key: string]: number };
+  userTimes: { [key: string]: number };
+  users: { [key: string]: string };
 }
 
 export default function Yoink() {
+  const [flag, setFlag] = useState<Flag>();
+  const [stats, setStats] = useState<Stats>();
+
+  useEffect(() => {
+    const getStats = async () => {
+      let res = await fetch("/api/stats", { next: { revalidate: 1800 } });
+      const _stats = await res.json();
+      setStats(_stats);
+
+      res = await fetch("/api/flag", { cache: "no-cache" });
+      const _flag = await res.json();
+      setFlag(_flag);
+    };
+    getStats();
+  }, []);
+
   return (
     <div className="space-y-4">
-        <h1 className="text-8xl font-bold">✨ Yoink Jubilee! 🚩</h1>
-      <div className="mt-4 text-4xl">
-        <p>All Yoinks Reset.</p>
-        <p>All Debts Forgiven.</p>
-        <p>The Game Is Changing...</p>
-      </div>
+      <h1 className="text-8xl font-bold">Yoink!</h1>
+      {flag && (
+        <p className="text-2xl">
+          <span
+            className={
+              flag.holderPlatform === "farcaster"
+                ? "text-fc-purple"
+                : "text-lens-pink"
+            }
+          >
+            {flag.holderName}
+          </span>{" "}
+          has the flag 🚩
+        </p>
+      )}
+      {stats && (
+        <p className="text-2xl">
+          The flag has been yoinked {stats.yoinks} times.
+        </p>
+      )}
       <div className="mt-4 text-xl">
         <p>
           Yoink{" "}
@@ -44,6 +79,7 @@ export default function Yoink() {
           </a>
         </p>
       </div>
+      {stats && <Leaderboard data={stats} />}
     </div>
   );
 }
