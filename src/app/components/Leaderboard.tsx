@@ -28,7 +28,7 @@ export default function Leaderboard({ data }: { data: Stats }) {
 
   return (
     <div className="container mx-auto mt-5 px-4 sm:px-6 lg:px-32">
-      <h2 className="text-2xl font-semibold mb-4">Leaderboard</h2>
+      <h2 className="text-2xl font-semibold mb-4">Leaderboard (updates every 30 minutes)</h2>
       <div>
         <button
           className="mr-4 py-2 px-4 bg-gray-200 rounded hover:bg-gray-300 text-gray-600"
