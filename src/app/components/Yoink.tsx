@@ -60,13 +60,24 @@ export default function Yoink() {
         <p>
           Yoink{" "}
           <a
-            className="text-red-500 underline"
-            href="https://warpcast.com/horsefacts.eth/0x80dd1ea4"
+            className="text-fc-purple underline"
+            href="https://warpcast.com/horsefacts.eth/0x2dacf32d"
             target="_blank"
           >
             here
           </a>{" "}
           on Warpcast.
+        </p>
+        <p>
+          Yoink{" "}
+          <a
+            className="text-lens-pink underline"
+            href="https://hey.xyz/posts/0x8cb1-0x05-DA-c4b6aaff"
+            target="_blank"
+          >
+            here
+          </a>{" "}
+          on Hey.
         </p>
         <p>
           See the code on{" "}
