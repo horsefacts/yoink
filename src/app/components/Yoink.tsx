@@ -58,26 +58,21 @@ export default function Yoink() {
       )}
       <div className="mt-4 text-xl">
         <p>
-          Yoink{" "}
+          Yoink on{" "}
           <a
             className="text-fc-purple underline"
             href="https://warpcast.com/horsefacts.eth/0x2dacf32d"
             target="_blank"
           >
-            here
-          </a>{" "}
-          on Warpcast.
-        </p>
-        <p>
-          Yoink{" "}
+            Warpcast
+          </a>{" "}or{" "}
           <a
             className="text-lens-pink underline"
             href="https://hey.xyz/posts/0x8cb1-0x05-DA-c4b6aaff"
             target="_blank"
           >
-            here
-          </a>{" "}
-          on Hey.
+            Hey
+          </a>.
         </p>
         <p>
           See the code on{" "}
