@@ -65,14 +65,16 @@ export default function Yoink() {
             target="_blank"
           >
             Warpcast
-          </a>{" "}or{" "}
+          </a>{" "}
+          or{" "}
           <a
             className="text-lens-pink underline"
             href="https://hey.xyz/posts/0x8cb1-0x05-DA-c4b6aaff"
             target="_blank"
           >
             Hey
-          </a>.
+          </a>
+          .
         </p>
         <p>
           See the code on{" "}
