@@ -38,7 +38,7 @@ export default function Yoink() {
     <div className="space-y-4">
       <h1 className="text-8xl font-bold">Yoink!</h1>
       {flag && (
-        <p className="text-2xl">
+        <p className="text-4xl">
           <span
             className={
               flag.holderPlatform === "farcaster"
@@ -76,6 +76,9 @@ export default function Yoink() {
           </a>
           .
         </p>
+      </div>
+      {stats && <Leaderboard data={stats} />}
+      <div>
         <p>
           See the code on{" "}
           <a
@@ -87,7 +90,6 @@ export default function Yoink() {
           </a>
         </p>
       </div>
-      {stats && <Leaderboard data={stats} />}
     </div>
   );
 }
