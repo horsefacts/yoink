@@ -4,7 +4,7 @@ import redis from "@/lib/redis";
 import Card from "@/app/components/Card";
 import { formatHuman } from "@/lib/formatDuration";
 
-export const dynamic = "force-dynamic";
+export const runtime = "edge";
 
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;

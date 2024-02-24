@@ -1,6 +1,8 @@
 import { ImageResponse } from "next/og";
 import Card from "@/app/components/Card";
 
+export const runtime = "edge";
+
 export async function GET() {
   return new ImageResponse(
     (
