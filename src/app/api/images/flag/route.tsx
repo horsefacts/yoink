@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import Card from "@/app/components/Card";
 import redis from "@/lib/redis";
 
-export const runtime = "edge";
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   const { holderName, holderPlatform } = await redis.hgetall("flag");
