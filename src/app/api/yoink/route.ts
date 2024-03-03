@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
           );
         } catch (e: any) {
           if (e?.message === "Rate limit exceeded.") {
-            const imageUrl = `${HOST}/api/images/ratelimit`;
+            const imageUrl = `${HOST}/api/images/ratelimit?date=${Date.now()}`;
             return new NextResponse(
               `<!DOCTYPE html>
                <html>
