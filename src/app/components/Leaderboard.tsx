@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useMemo } from "react";
 import { Stats } from "./Yoink";
 import { formatCompact, formatHuman } from "@/lib/formatDuration";
 
