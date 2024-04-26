@@ -15,5 +15,5 @@ export async function GET() {
 }
 
 export async function POST() {
-  return NextResponse.json({ type: "frame", url: `${HOST}/api/start`});
+  return NextResponse.json({ type: "frame", frameUrl: `${HOST}/api/start`});
 }
