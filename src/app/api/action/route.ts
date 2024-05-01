@@ -8,8 +8,12 @@ export async function GET() {
     icon: "bookmark",
     description: "Yoink anywhere, at any time.",
     action: {
-        type: 'post',
-        postUrl: `${HOST}/api/start`
-    }
+      type: "post",
+      postUrl: `${HOST}/api/action`,
+    },
   });
+}
+
+export async function POST() {
+  return NextResponse.json({ type: "frame", frameUrl: `${HOST}/api/start` });
 }
