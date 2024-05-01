@@ -9,7 +9,7 @@ export async function GET() {
     description: "Yoink anywhere, at any time.",
     action: {
         type: 'post',
-        postUrl: `${HOST}/api/action`
+        postUrl: `${HOST}/api/start`
     }
   });
 }
