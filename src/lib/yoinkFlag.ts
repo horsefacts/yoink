@@ -19,7 +19,7 @@ export async function yoinkFlag(id: string, name: string, platform: string) {
   }
 
   const lastYoink = await redis.hget(rateLimitKey, fullId);
-  if (lastYoink && currentTime - parseInt(lastYoink, 10) < 600000) {
+  if (lastYoink && currentTime - parseInt(lastYoink, 10) < 60000) {
     throw new Error("Rate limit exceeded.");
   }
 

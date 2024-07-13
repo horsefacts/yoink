@@ -7,7 +7,7 @@ export async function GET() {
       <Card>
         <h1 style={{ fontSize: 96 }}>Slow Down!</h1>
         <div>You&apos;re yoinking too fast.</div>
-        <div>You can yoink the flag once every 10 minutes.</div>
+        <div>You can yoink the flag once every minute.</div>
       </Card>
     ),
     {
