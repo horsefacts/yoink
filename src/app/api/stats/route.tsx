@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 export const revalidate = 86400;
 
 export async function GET() {
+  return NextResponse.json({ message: "Unavailable" }, { status: 503 });
   const flag = await redis.hgetall("flag");
   const { holderId, yoinkedAt } = flag;
   const yoinks = await redis.get("yoinks") ?? "0";
