@@ -23,11 +23,11 @@ export default function Yoink() {
 
   useEffect(() => {
     const getStats = async () => {
-      let res = await fetch("/api/stats", { next: { revalidate: 1800 } });
-      const _stats = await res.json();
-      setStats(_stats);
+      //let res = await fetch("/api/stats", { next: { revalidate: 1800 } });
+      //const _stats = await res.json();
+      //setStats(_stats);
 
-      res = await fetch("/api/flag", { cache: "no-cache" });
+      const res = await fetch("/api/flag", { cache: "no-cache" });
       const _flag = await res.json();
       setFlag(_flag);
     };
