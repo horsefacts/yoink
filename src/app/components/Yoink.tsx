@@ -27,7 +27,7 @@ export default function Yoink() {
       //const _stats = await res.json();
       //setStats(_stats);
 
-      const res = await fetch("/api/flag", { cache: "no-cache" });
+      const res = await fetch("/api/flag", { next: { revalidate: 600 } });
       const _flag = await res.json();
       setFlag(_flag);
     };
