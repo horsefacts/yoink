@@ -1,7 +1,7 @@
 import redis from "@/lib/redis";
 import { NextResponse } from "next/server";
 
-export const revalidate = 1800;
+export const revalidate = 86400;
 
 export async function GET() {
   const flag = await redis.hgetall("flag");
